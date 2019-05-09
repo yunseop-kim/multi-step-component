@@ -9,7 +9,6 @@
       >
       {{option.text}}
     </div>
-    {{selectedItem}}
   </div>
 </template>
 <script>

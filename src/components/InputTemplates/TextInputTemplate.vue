@@ -1,7 +1,6 @@
 <template>
   <div>
     <input type="text" v-model="textInput">
-    <div>{{textInput}}</div>
   </div>
 </template>
 <script>

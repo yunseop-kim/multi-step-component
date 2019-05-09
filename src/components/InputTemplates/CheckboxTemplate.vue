@@ -4,7 +4,6 @@
       <input type="checkbox" :value="option.text" v-model="selectedItems">
       {{option.text}}
     </div>
-    {{selectedItems}}
   </div>
 </template>
 <script>

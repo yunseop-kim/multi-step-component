@@ -4,9 +4,6 @@
       <option :value="null">선택하세요</option>
       <option v-for="option in item.options" :key="option.id" :value="option.text">{{option.text}}</option>
     </select>
-    <div>
-      {{selectedItem}}
-    </div>
   </div>
 </template>
 <script>
