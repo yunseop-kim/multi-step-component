@@ -7,11 +7,15 @@
       <h2 v-if="step == index">{{item.title}}</h2>
       <component v-if="step == index" :item="item" :is="componentFactory(item.formType)"></component>
     </input-template>
-    <div>
-      <button @click="prev">prev</button>
-      <button @click="next">next</button>
+    <div name="buttons" v-if="!submitted">
+      <button v-if="step != 0" @click="prev">이전</button>
+      <button v-if="!isLast" @click="next">다음</button>
+      <button v-if="isLast" @click="submit">제출</button>
     </div>
-    {{ output }}
+    <div v-else>
+      <h5>답변이 제출되었습니다.</h5>
+      {{output}}
+    </div>
   </div>
 </template>
 
@@ -29,11 +33,18 @@ export default {
   data() {
     return {
       myInput,
-      step: 0
+      step: 0,
+      submitted: false
     };
   },
+  mounted() {
+    this.$store.commit("setFormId", this.myInput.formId);
+  },
   computed: {
-    ...mapGetters(["output"])
+    ...mapGetters(["output"]),
+    isLast() {
+      return this.step == this.myInput.items.length - 1;
+    }
   },
   methods: {
     componentFactory(formType) {
@@ -51,12 +62,23 @@ export default {
       }
     },
     prev() {
-      this.$store.commit('removeItem')
+      this.$store.commit("removeItem");
       this.step--;
     },
     next() {
-      this.$store.commit('addItem')
-      this.step++;
+      if (this.$store.getters.currentItem.answer) {
+        this.$store.commit("addItem");
+        this.step++;
+      } else {
+        window.alert("값을 입력해주세요!");
+        return;
+      }
+      // if (!this.isLast)
+    },
+    submit() {
+      this.next();
+      console.log("result: ", this.output);
+      this.submitted = true;
     }
   },
   components: {

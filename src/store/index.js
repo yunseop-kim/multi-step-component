@@ -32,6 +32,9 @@ export default new Vuex.Store({
         removeItem(state) {
             state.output.items.pop()
         },
+        setFormId(state, id) {
+            state.output.id = id
+        },
         setInputItem(state, {
             id = null,
             answer = null
