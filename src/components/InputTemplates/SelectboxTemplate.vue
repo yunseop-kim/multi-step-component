@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h2 class="question">{{item.title}}</h2>
     <select v-model="selectedItem">
       <option :value="null">선택하세요</option>
       <option v-for="option in item.options" :key="option.id" :value="option.text">{{option.text}}</option>
@@ -12,13 +13,13 @@ export default {
   name: "CheckboxTemplate",
   extends: InputTemplate,
   watch: {
-    selectedItem(val, oldVal) {
+    selectedItem(val) {
       const item = {
         id: this.item.itemId,
         answer: val
       };
-      this.$store.commit("setInputItem", item);
+      this.setInputItem(item);
     }
-  },
+  }
 };
 </script>

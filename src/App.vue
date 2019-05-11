@@ -3,18 +3,18 @@
     <div id="title">
       <h1>{{myInput.title}}</h1>
     </div>
-    <input-template v-for="(item, index) in myInput.items" :key="index" :item="item">
-      <h2 v-if="step == index">{{item.title}}</h2>
-      <component v-if="step == index" :item="item" :is="componentFactory(item.formType)"></component>
-    </input-template>
-    <div name="buttons" v-if="!submitted">
-      <button v-if="step != 0" @click="prev">이전</button>
-      <button v-if="!isLast" @click="next">다음</button>
-      <button v-if="isLast" @click="submit">제출</button>
-    </div>
-    <div v-else>
-      <h5>답변이 제출되었습니다.</h5>
-      {{output}}
+    <div class="step-card">
+      <div v-for="(item, index) in myInput.items" :key="index">
+        <component v-if="step == index" :item="item" :is="componentFactory(item.formType)"/>
+      </div>
+      <div class="buttons" v-if="!submitted">
+        <button class="button" v-if="step != 0" @click="prev">이전</button>
+        <button class="button" v-if="!isLast" @click="next">다음</button>
+        <button class="button" v-if="isLast" @click="submit">제출</button>
+      </div>
+      <div v-else>
+        <h5>답변이 제출되었습니다.</h5>
+      </div>
     </div>
   </div>
 </template>
@@ -23,7 +23,6 @@
 import { mapGetters } from "vuex";
 
 import myInput from "@/assets/input.json";
-import InputTemplate from "./components/InputTemplates/InputTemplate";
 import CheckboxTemplate from "./components/InputTemplates/CheckboxTemplate";
 import RadioTemplate from "./components/InputTemplates/RadioTemplate";
 import SelectboxTemplate from "./components/InputTemplates/SelectboxTemplate";
@@ -69,20 +68,20 @@ export default {
       if (this.$store.getters.currentItem.answer) {
         this.$store.commit("addItem");
         this.step++;
+        return true;
       } else {
         window.alert("값을 입력해주세요!");
-        return;
+        return false;
       }
-      // if (!this.isLast)
     },
     submit() {
-      this.next();
-      console.log("result: ", this.output);
-      this.submitted = true;
+      if (this.next()) {
+        console.log("result: ", this.output);
+        this.submitted = true;
+      }
     }
   },
   components: {
-    InputTemplate,
     CheckboxTemplate,
     RadioTemplate,
     SelectboxTemplate,
@@ -91,7 +90,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -99,5 +98,28 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+.step-card {
+  text-align: center;
+  width: 500px;
+  border: 1px solid #eee;
+  padding: 20px;
+  display: inline-block;
+  .question {
+    font-size: 25px;
+    color: #1dccaa;
+    margin: 10px;
+  }
+  .buttons {
+    margin-top: 20px;
+    .button {
+      background-color: #4CAF50; /* Green */
+      border: 1px solid white;
+      color: white;
+      padding: 6px 18px;
+      font-size: 16px;
+    }
+  }
 }
 </style>

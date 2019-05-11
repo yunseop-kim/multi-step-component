@@ -1,13 +1,9 @@
 <template>
   <div>
+    <h2 class="question">{{item.title}}</h2>
     <div v-for="option in item.options" :key="option.id">
-      <input
-        :name="`option-${option.itemId}`"
-        type="radio"
-        :value="option.text"
-        v-model="selectedItem"
-      >
-      {{option.text}}
+      <input :id="`option-${option.id}`" type="radio" :value="option.text" v-model="selectedItem">
+      <label :for="`option-${option.id}`">{{option.text}}</label>
     </div>
   </div>
 </template>
@@ -17,12 +13,12 @@ export default {
   name: "CheckboxTemplate",
   extends: InputTemplate,
   watch: {
-    selectedItem(val, oldVal) {
+    selectedItem(val) {
       const item = {
         id: this.item.itemId,
         answer: val
       };
-      this.$store.commit("setInputItem", item);
+      this.setInputItem(item);
     }
   }
 };

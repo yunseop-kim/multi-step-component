@@ -1,8 +1,14 @@
 <template>
   <div>
+    <h2 class="question">{{item.title}}</h2>
     <div v-for="option in item.options" :key="option.id">
-      <input type="checkbox" :value="option.text" v-model="selectedItems">
-      {{option.text}}
+      <input
+        :id="`checkbox_${option.id}`"
+        type="checkbox"
+        :value="option.text"
+        v-model="selectedItems"
+      >
+      <label :for="`checkbox_${option.id}`">{{option.text}}</label>
     </div>
   </div>
 </template>
@@ -12,12 +18,12 @@ export default {
   name: "CheckboxTemplate",
   extends: InputTemplate,
   watch: {
-    selectedItems(val, oldVal) {
+    selectedItems(val) {
       const item = {
         id: this.item.itemId,
         answer: val.join(",")
       };
-      this.$store.commit('setInputItem', item)
+      this.setInputItem(item);
     }
   }
 };

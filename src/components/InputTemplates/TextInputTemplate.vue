@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h2 class="question">{{item.title}}</h2>
     <input type="text" v-model="textInput">
   </div>
 </template>
@@ -9,13 +10,13 @@ export default {
   name: "CheckboxTemplate",
   extends: InputTemplate,
   watch: {
-    textInput(val, oldVal) {
+    textInput(val) {
       const item = {
         id: this.item.itemId,
         answer: val
       };
-      this.$store.commit("setInputItem", item);
+      this.setInputItem(item);
     }
-  },
+  }
 };
 </script>
