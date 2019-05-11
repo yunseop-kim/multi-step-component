@@ -27,6 +27,7 @@ import CheckboxTemplate from "./components/InputTemplates/CheckboxTemplate";
 import RadioTemplate from "./components/InputTemplates/RadioTemplate";
 import SelectboxTemplate from "./components/InputTemplates/SelectboxTemplate";
 import TextInputTemplate from "./components/InputTemplates/TextInputTemplate";
+import componentFactory from '@/utils/ComponentFactory.js'
 export default {
   name: "app",
   data() {
@@ -47,18 +48,7 @@ export default {
   },
   methods: {
     componentFactory(formType) {
-      switch (formType) {
-        case 1:
-          return "CheckboxTemplate";
-        case 2:
-          return "RadioTemplate";
-        case 3:
-          return "TextInputTemplate";
-        case 4:
-          return "SelectboxTemplate";
-        default:
-          return "InputTemplate";
-      }
+      return componentFactory(formType)
     },
     prev() {
       this.$store.commit("removeItem");
