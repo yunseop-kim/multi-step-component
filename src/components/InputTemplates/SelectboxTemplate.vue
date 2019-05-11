@@ -10,7 +10,7 @@
 <script>
 import InputTemplate from "./InputTemplate";
 export default {
-  name: "CheckboxTemplate",
+  name: "SelectBoxTemplate",
   extends: InputTemplate,
   watch: {
     selectedItem(val) {
