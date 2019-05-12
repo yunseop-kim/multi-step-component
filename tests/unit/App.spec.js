@@ -29,9 +29,11 @@ function formTypeChecker(formType) {
 // class TestHelper {
 //     _wrapper;
 //     _data;
-//     constructor(wrapper, data) {
+//     _store;
+//     constructor(wrapper, data, store) {
 //         this._wrapper = wrapper;
 //         this._data = data;
+//         this._store = store;
 //     }
 
 //     checkFormType() {
@@ -48,6 +50,58 @@ function formTypeChecker(formType) {
 //                 return "text";
 //         }
 //     }
+
+//     findButton(text) {
+//         const buttons = wrapper.findAll('.button')
+//         const index = buttons.findIndex((button) => button.text() == text)
+//         return buttons.at(index);
+//     }
+
+//     checkButton() {
+//         // TODO: 버튼 분간하는 method 필요.
+//         // step 0 : 다음버튼 1개
+//         if (this._data.step == 0) {
+//             const buttons = wrapper.findAll('.button')
+//             expect(buttons.length).equal(1)
+//             const button = buttons.at(0)
+//             expect(button.text()).equal('다음')
+//         } else if (this._data.step > 0 && this._data.step < this._data.myInput.items.length) {
+//             // step n-1 : 버튼 2개, (이전, 다음)
+//             const buttons = wrapper.findAll('.button')
+//             expect(buttons.length).equal(2)
+//             expect(this.findButton('이전').text()).equal('이전')
+//             expect(this.findButton('다음').text()).equal('다음')
+//         } else {
+//             // step n: 버튼 두개, (이전, 제출)
+//             const buttons = wrapper.findAll('.button')
+//             expect(buttons.length).equal(2)
+//             expect(this.findButton('이전').text()).equal('이전')
+//             expect(this.findButton('제출').text()).equal('제출')
+//         }
+//     }
+
+//     goBack() {
+//         const currentStep = this.data.step
+//         localVue.nextTick(() => {
+//             expect(this.data.step).equal(currentStep - 1);
+//             expect(store.state.output.items.length).equal(currentStep - 1);
+//         })
+//     }
+
+//     goNext(expectAnswer) {
+//         const currentStep = this.data.step
+//         localVue.nextTick(() => {
+//             expect(wrapper.vm.step).equal(currentStep + 1);
+//             expect(store.state.output.items.length).equal(1);
+//             expect(store.state.output.items[currentStep].answer).equal(expectAnswer);
+//         })
+//     }
+
+//     // 엘리먼트 타입별 테스트 메소드 생성하기.
+//     // 1. 체크박스
+//     // 2. 라디오
+//     // 3. 텍스트
+//     // 4. 셀렉트박스
 // }
 
 describe('App', () => {
@@ -74,7 +128,6 @@ describe('App', () => {
 
     it('step 0에서는 "다음" 버튼을 클릭하면, 다음 단계로 넘어갑니다..', () => {
         expect(wrapper.vm.step).equal(0);
-
         const formType = formTypeChecker(myInput.items[wrapper.vm.step].formType)
         expect(formType).equal('checkbox');
 
@@ -95,7 +148,8 @@ describe('App', () => {
     })
 
     it('step 1에서 "이전" 버튼을 클릭하면, 전 단계로 돌아갑니다.', () => {
-        expect(wrapper.vm.step).equal(1);
+        const currentStep = wrapper.vm.step
+        expect(currentStep).equal(1);
 
         // TODO: 버튼 이전, 이후를 찾는 method를 만들자.
         const button = wrapper.findAll('.button').at(0)
@@ -103,14 +157,16 @@ describe('App', () => {
         button.trigger('click')
 
         localVue.nextTick(() => {
-            expect(wrapper.vm.step).equal(0);
-            expect(store.state.output.items.length).equal(0);
+            expect(wrapper.vm.step).equal(currentStep - 1);
+            expect(store.state.output.items.length).equal(currentStep - 1);
         })
     })
 
     it(`step 0에서는 선택시에 join(',') 을 이용해서 답을 합칩니다.`, () => {
-        expect(wrapper.vm.step).equal(0);
-        const formType = formTypeChecker(myInput.items[wrapper.vm.step].formType)
+        const currentStep = wrapper.vm.step
+        expect(currentStep).equal(0);
+
+        const formType = formTypeChecker(myInput.items[currentStep].formType)
         expect(formType).equal('checkbox');
 
         // 체크박스 선택
@@ -118,22 +174,22 @@ describe('App', () => {
         inputs.at(1).trigger('click')
         inputs.at(2).trigger('click')
 
+        // TODO: myInput.item의 formType과 여기서 어떤 input type을 사용하는지에 대한 지식을 프로그램이 알아야 한다.
+        // Checkbox일때만의 특별한 검사 방법을 로직화 한다.
+        const expectAnswers = [
+            myInput.items[currentStep].options[1].text,
+            myInput.items[currentStep].options[2].text
+        ].join(',')
+
         // 다음 버튼 클릭
         const button = wrapper.findAll('.button').at(0)
         expect(button.text()).equal('다음')
         button.trigger('click')
 
-        // TODO: myInput.item의 formType과 여기서 어떤 input type을 사용하는지에 대한 지식을 프로그램이 알아야 한다.
-        // Checkbox일때만의 특별한 검사 방법을 로직화 한다.
-        const expectAnswers = [
-            myInput.items[(wrapper.vm.step - 1)].options[1].text,
-            myInput.items[(wrapper.vm.step - 1)].options[2].text
-        ].join(',')
-
         localVue.nextTick(() => {
-            expect(wrapper.vm.step).equal(1);
+            expect(wrapper.vm.step).equal(currentStep + 1);
             expect(store.state.output.items.length).equal(1);
-            expect(store.state.output.items[(wrapper.vm.step - 1)].answer).equal(expectAnswers);
+            expect(store.state.output.items[currentStep].answer).equal(expectAnswers);
         })
     })
 
